@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: golang-mathapp-ingress
+  namespace: ahmedhajji
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+  - host: ahmedhajji-math.horizon-workspaces.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: golang-mathapp-service
+            port:
+              number: 8010
+  tls:
+  - hosts:
+    - ahmedhajji-math.horizon-workspaces.com
+    secretName: golang-mathapp-tls

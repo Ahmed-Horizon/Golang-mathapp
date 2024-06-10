@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "golang-mathapp.fullname" . }}
+  labels:
+    {{- include "golang-mathapp.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "golang-mathapp.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "golang-mathapp.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8010
+          volumeMounts:
+            - name: data-storage
+              mountPath: /tmp/data
+      volumes:
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: golang-mathapp-pvc
